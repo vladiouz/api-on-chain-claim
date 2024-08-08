@@ -1,2 +1,2 @@
 export const sc_address: string =
-  'erd1qqqqqqqqqqqqqpgqwum4lv7xmkqvjapsd65urpfluf85snceagdswqj9q5';
+  'erd1qqqqqqqqqqqqqpgq9h0wxawhjfpvahtewqwla3s45v8flj48pvmst0rkah';
