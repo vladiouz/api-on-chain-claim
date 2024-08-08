@@ -2,7 +2,10 @@ import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 
 // Determine which .env file to load based on NODE_ENV
-const envPath = process.env.NODE_ENV === 'infra' ? '.env' : `.env.${process.env.NODE_ENV ?? 'mainnet'}`;
+const envPath =
+  process.env.NODE_ENV === 'infra'
+    ? '.env'
+    : `.env.${process.env.NODE_ENV ?? 'mainnet'}`;
 dotenv.config({
   path: resolve(process.cwd(), envPath),
 });
@@ -10,9 +13,7 @@ dotenv.config({
 import 'module-alias/register';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { readFileSync } from 'fs';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { join } from 'path';
 import { PrivateAppModule } from './private.app.module';
 import { PublicAppModule } from './public.app.module';
 import * as bodyParser from 'body-parser';
@@ -20,7 +21,11 @@ import { Logger, NestInterceptor, ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import cookieParser from 'cookie-parser';
 import { PubSubListenerModule } from '@libs/common';
-import { LoggingInterceptor, MetricsService, RequestCpuTimeInterceptor } from '@multiversx/sdk-nestjs-monitoring';
+import {
+  LoggingInterceptor,
+  MetricsService,
+  RequestCpuTimeInterceptor,
+} from '@multiversx/sdk-nestjs-monitoring';
 import { LoggerInitializer } from '@multiversx/sdk-nestjs-common';
 
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/array.extensions';
@@ -40,7 +45,8 @@ async function bootstrap() {
   const privateApp = await NestFactory.create(PrivateAppModule);
 
   const appConfigService = publicApp.get<AppConfigService>(AppConfigService);
-  const commonConfigService = publicApp.get<CommonConfigService>(CommonConfigService);
+  const commonConfigService =
+    publicApp.get<CommonConfigService>(CommonConfigService);
   const metricsService = privateApp.get<MetricsService>(MetricsService);
 
   const globalInterceptors: NestInterceptor[] = [];
@@ -50,11 +56,10 @@ async function bootstrap() {
   publicApp.useGlobalInterceptors(...globalInterceptors);
   publicApp.useGlobalPipes(new ValidationPipe());
 
-  const description = readFileSync(join(__dirname, '..', 'docs', 'swagger.md'), 'utf8');
+  // const description = readFileSync(join(__dirname, '..', 'docs', 'swagger.md'), 'utf8');
 
   const config = new DocumentBuilder()
     .setTitle('MultiversX Microservice API')
-    .setDescription(description)
     .setVersion('1.0.0')
     .setExternalDoc('MultiversX Docs', 'https://docs.multiversx.com')
     .build();

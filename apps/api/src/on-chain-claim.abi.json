@@ -1,0 +1,272 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.79.0",
+            "commitHash": "129f3b9964af4d4a709d1383930ade12dfe7c081",
+            "commitDate": "2024-06-10",
+            "channel": "Stable",
+            "short": "rustc 1.79.0 (129f3b996 2024-06-10)"
+        },
+        "contractCrate": {
+            "name": "on-chain-claim",
+            "version": "0.0.0"
+        },
+        "framework": {
+            "name": "multiversx-sc",
+            "version": "0.51.1"
+        }
+    },
+    "name": "OnChainClaimContract",
+    "constructor": {
+        "inputs": [
+            {
+                "name": "repair_streak_token_id",
+                "type": "TokenIdentifier"
+            },
+            {
+                "name": "repair_streak_token_nonce",
+                "type": "u64"
+            }
+        ],
+        "outputs": []
+    },
+    "upgradeConstructor": {
+        "inputs": [],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "claim",
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "claimAndRepair",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "*"
+            ],
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "updateState",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                },
+                {
+                    "name": "current_streak",
+                    "type": "u64"
+                },
+                {
+                    "name": "last_epoch_claimed",
+                    "type": "u64"
+                },
+                {
+                    "name": "total_epochs_claimed",
+                    "type": "u64"
+                },
+                {
+                    "name": "best_streak",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "setRepairStreakPayment",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "repair_streak_token_identifier",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "repair_streak_token_nonce",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getAddressInfo",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "AddressInfo"
+                }
+            ]
+        },
+        {
+            "name": "canBeRepaired",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "getRepairStreakPayment",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "EsdtTokenPayment"
+                }
+            ]
+        },
+        {
+            "name": "isAdmin",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "addAdmin",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "removeAdmin",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getAdmins",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "variadic<Address>",
+                    "multi_result": true
+                }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "identifier": "new_claim",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "info",
+                    "type": "AddressInfo"
+                }
+            ]
+        },
+        {
+            "identifier": "new_claim_and_repair",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "info",
+                    "type": "AddressInfo"
+                }
+            ]
+        },
+        {
+            "identifier": "new_update_state",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "info",
+                    "type": "AddressInfo"
+                }
+            ]
+        }
+    ],
+    "esdtAttributes": [],
+    "hasCallback": false,
+    "types": {
+        "AddressInfo": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "current_streak",
+                    "type": "u64"
+                },
+                {
+                    "name": "last_epoch_claimed",
+                    "type": "u64"
+                },
+                {
+                    "name": "total_epochs_claimed",
+                    "type": "u64"
+                },
+                {
+                    "name": "best_streak",
+                    "type": "u64"
+                }
+            ]
+        },
+        "EsdtTokenPayment": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "token_identifier",
+                    "type": "TokenIdentifier"
+                },
+                {
+                    "name": "token_nonce",
+                    "type": "u64"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ]
+        }
+    }
+}

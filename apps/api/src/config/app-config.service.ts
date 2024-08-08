@@ -1,7 +1,10 @@
-import { configuration } from "@libs/common/config/configuration";
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppConfigService {
-  readonly config = configuration().apps.api;
+  readonly config = {
+    port: 3000,
+    privatePort: 3001,
+    useCachingInterceptor: true,
+  };
 }
