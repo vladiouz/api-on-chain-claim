@@ -18,10 +18,15 @@ import { UpdateStateDto } from './update-state.dto';
 import { RepairStreakPaymentDto } from './repair-streak-payment.dto';
 import { AddressInfoDto } from './address-info.dto';
 import { EsdtTokenPaymentDto } from './esdt-token-payment.dto';
+import { CacheService } from '@multiversx/sdk-nestjs-cache';
+import { CacheInfo } from '@libs/common';
 
 @Injectable()
 export class OnChainClaimService {
-  constructor(private readonly commonService: CommonService) {}
+  constructor(
+    private readonly commonService: CommonService,
+    private readonly cachingService: CacheService,
+  ) {}
 
   async getSmartContract(address: string): Promise<SmartContract> {
     const jsonContent: string = await promises.readFile(
@@ -111,7 +116,17 @@ export class OnChainClaimService {
     return transaction;
   }
 
-  async getAddressInfo(address: string): Promise<AddressInfoDto> {
+  public async getAddressInfo(address: string): Promise<AddressInfoDto> {
+    return this.cachingService.getOrSet(
+      CacheInfo.AddressInfo(address).key,
+      async () => {
+        return this.getAddressInfoRaw(address);
+      },
+      CacheInfo.AddressInfo(address).ttl,
+    );
+  }
+
+  private async getAddressInfoRaw(address: string): Promise<AddressInfoDto> {
     const provider = await this.commonService.getNetworkProvider();
     const contract = await this.getSmartContract(sc_address);
     const interactor = contract.methodsExplicit.getAddressInfo([
@@ -131,7 +146,17 @@ export class OnChainClaimService {
     return result.firstValue.valueOf();
   }
 
-  async getCanBeRepaired(address: string): Promise<boolean> {
+  public async getCanBeRepaired(address: string): Promise<boolean> {
+    return this.cachingService.getOrSet(
+      CacheInfo.CanBeRepaired(address).key,
+      async () => {
+        return this.getCanBeRepairedRaw(address);
+      },
+      CacheInfo.CanBeRepaired(address).ttl,
+    );
+  }
+
+  private async getCanBeRepairedRaw(address: string): Promise<boolean> {
     const provider = await this.commonService.getNetworkProvider();
     const contract = await this.getSmartContract(sc_address);
     const interactor = contract.methodsExplicit.canBeRepaired([
@@ -151,7 +176,17 @@ export class OnChainClaimService {
     return result.firstValue.valueOf();
   }
 
-  async getRepairStreakPayment(): Promise<EsdtTokenPaymentDto> {
+  public async getRepairStreakPayment(): Promise<EsdtTokenPaymentDto> {
+    return this.cachingService.getOrSet(
+      CacheInfo.RepairStreakPayment().key,
+      async () => {
+        return this.getRepairStreakPaymentRaw();
+      },
+      CacheInfo.RepairStreakPayment().ttl,
+    );
+  }
+
+  private async getRepairStreakPaymentRaw(): Promise<EsdtTokenPaymentDto> {
     const provider = await this.commonService.getNetworkProvider();
     const contract = await this.getSmartContract(sc_address);
     const interactor = contract.methodsExplicit.getRepairStreakPayment();
