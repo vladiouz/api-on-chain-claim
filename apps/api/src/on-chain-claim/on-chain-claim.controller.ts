@@ -4,14 +4,10 @@ import { UpdateStateDto } from './update-state.dto';
 import { RepairStreakPaymentDto } from './repair-streak-payment.dto';
 import { AddressInfoDto } from './address-info.dto';
 import { EsdtTokenPaymentDto } from './esdt-token-payment.dto';
-import { RedisCacheService } from '@multiversx/sdk-nestjs-cache';
 
 @Controller('on-chain-claim')
 export class OnChainClaimController {
-  constructor(
-    private readonly onChainClaimService: OnChainClaimService,
-    private readonly redisService: RedisCacheService,
-  ) {}
+  constructor(private readonly onChainClaimService: OnChainClaimService) {}
 
   @Get('/transaction/claim')
   async getClaimTransaction() {
@@ -48,42 +44,19 @@ export class OnChainClaimController {
   async getAddressInfo(
     @Param('address') address: string,
   ): Promise<AddressInfoDto> {
-    const value = await this.redisService.getOrSet(
-      `getAddressInfo-${address}`,
-      async () => {
-        const value = await this.onChainClaimService.getAddressInfo(address);
-        return value;
-      },
-      60,
-    );
-
+    const value = await this.onChainClaimService.getAddressInfo(address);
     return value;
   }
 
   @Get('/can-be-repaired/:address')
   async getCanBeRepaired(@Param('address') address: string): Promise<boolean> {
-    const value = await this.redisService.getOrSet(
-      `canBeRepaired-${address}`,
-      async () => {
-        const value = await this.onChainClaimService.getCanBeRepaired(address);
-        return value;
-      },
-      60,
-    );
-
+    const value = await this.onChainClaimService.getCanBeRepaired(address);
     return value;
   }
 
   @Get('/repair-streak-payment')
   async getRepairStreakPayment(): Promise<EsdtTokenPaymentDto> {
-    const value = await this.redisService.getOrSet(
-      `repairStreakPayment`,
-      async () => {
-        const value = await this.onChainClaimService.getRepairStreakPayment();
-        return value;
-      },
-      60,
-    );
+    const value = await this.onChainClaimService.getRepairStreakPayment();
     return value;
   }
 }
